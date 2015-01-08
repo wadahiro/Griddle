@@ -24,6 +24,11 @@ var GridRow = React.createClass({
     handleClick: function(){
       this.props.toggleChildren();
     },
+    handleClickRow: function(){
+      if (this.props.selectRow) {
+        this.props.selectRow(this.props.data);
+      }
+    },
     render: function() {
         var that = this;
 
@@ -48,7 +53,7 @@ var GridRow = React.createClass({
             className = that.props.showChildren ? "parent-row expanded" : "parent-row";
         }
 
-        return (<tr className={className}>{nodes}</tr>);
+        return (<tr className={className} onClick={this.handleClickRow}>{nodes}</tr>);
     }
 });
 
