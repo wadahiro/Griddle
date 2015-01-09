@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var React = __webpack_require__(2);
 	var ChartistGraph = __webpack_require__(12); 
 
-	var TestChart = React.createClass({displayName: 'TestChart',
+	var TestChart = React.createClass({displayName: "TestChart",
 		getInitialProps: function(){
 
 		},
