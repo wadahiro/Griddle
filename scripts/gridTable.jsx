@@ -232,7 +232,13 @@ var GridTable = React.createClass({
       if (this.props.useGriddleStyles) {
         tableStyle.tableLayout = "fixed";
       }
-
+      gridStyle = {
+        position: "relative",
+        overflowY: "scroll",
+        height: this.props.bodyHeight + "px",
+        width: "100%"
+      };
+      
       return <div>
               <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
                 {tableHeading}
@@ -241,6 +247,10 @@ var GridTable = React.createClass({
                 <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
                     {nodes}
                     {loadingContent}
+                </table>
+              </div>
+              <div>
+                <table style={(this.props.useGriddleStyles&&tableStyle)||null}>
                     {pagingContent}
                 </table>
               </div>
@@ -255,6 +265,7 @@ var GridTable = React.createClass({
                   {pagingContent}
               </table>
             </div>
+            
     }
 });
 

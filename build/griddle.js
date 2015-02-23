@@ -75,9 +75,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var GridFilter = __webpack_require__(6);
 	var GridPagination = __webpack_require__(7);
 	var GridSettings = __webpack_require__(8);
-	var GridNoData = __webpack_require__(9);
-	var CustomRowComponentContainer = __webpack_require__(10);
-	var CustomPaginationContainer = __webpack_require__(11);
+	var GridNoData = __webpack_require__(11);
+	var CustomRowComponentContainer = __webpack_require__(9);
+	var CustomPaginationContainer = __webpack_require__(10);
 	var ColumnProperties = __webpack_require__(4);
 	var _ = __webpack_require__(3);
 
@@ -910,10 +910,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.verifyProps();
 	    var that = this;
 
-
-	    debugger;
-
-
 	    // If the data is still being loaded, don't build the nodes unless this is an infinite scroll table.
 	    if (!this.props.externalIsLoading || this.props.enableInfiniteScroll) {
 	      var nodeData = that.props.data;
@@ -1090,7 +1086,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            "table",
 	            { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null },
 	            nodes,
-	            loadingContent,
+	            loadingContent
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          null,
+	          React.createElement(
+	            "table",
+	            { style: this.props.useGriddleStyles && tableStyle || null },
 	            pagingContent
 	          )
 	        )
@@ -1419,37 +1423,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
-	/*
-	   See License / Disclaimer https://raw.githubusercontent.com/DynamicTyped/Griddle/master/LICENSE
-	*/
-	var React = __webpack_require__(2);
-
-	var GridNoData = React.createClass({
-	    displayName: "GridNoData",
-	    getDefaultProps: function () {
-	        return {
-	            noDataMessage: "No Data"
-	        };
-	    },
-	    render: function () {
-	        var that = this;
-
-	        return React.createElement(
-	            "div",
-	            null,
-	            this.props.noDataMessage
-	        );
-	    }
-	});
-
-	module.exports = GridNoData;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
 	/** @jsx React.DOM */
 
 	/*
@@ -1495,7 +1468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CustomRowComponentContainer;
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1535,6 +1508,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	module.exports = CustomPaginationContainer;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	/*
+	   See License / Disclaimer https://raw.githubusercontent.com/DynamicTyped/Griddle/master/LICENSE
+	*/
+	var React = __webpack_require__(2);
+
+	var GridNoData = React.createClass({
+	    displayName: "GridNoData",
+	    getDefaultProps: function () {
+	        return {
+	            noDataMessage: "No Data"
+	        };
+	    },
+	    render: function () {
+	        var that = this;
+
+	        return React.createElement(
+	            "div",
+	            null,
+	            this.props.noDataMessage
+	        );
+	    }
+	});
+
+	module.exports = GridNoData;
 
 /***/ },
 /* 12 */
