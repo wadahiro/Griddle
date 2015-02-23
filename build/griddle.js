@@ -1031,7 +1031,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    //construct the table heading component
 	    var tableHeading = this.props.showTableHeading ? React.createElement(GridTitle, { useGriddleStyles: this.props.useGriddleStyles, useGriddleIcons: this.props.useGriddleIcons,
 	      sortSettings: this.props.sortSettings,
-	      columnSettings: this.props.columnSettings }) : "";
+	      columnSettings: this.props.columnSettings,
+	      useFixedHeader: this.props.useFixedHeader
+	    }) : "";
 
 	    //check to see if any of the rows have children... if they don't wrap everything in a tbody so the browser doesn't auto do this
 	    if (!anyHasChildren) {
@@ -1568,8 +1570,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            headerStyle: null,
 	            useGriddleStyles: true,
 	            useGriddleIcons: true,
+	            useFixedHeader: false,
 	            headerClassName: "",
-	            headerStyles: {} };
+	            headerStyles: {}
+	        };
 	    },
 	    componentWillMount: function () {
 	        this.verifyProps();
@@ -1629,6 +1633,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                sortComponent
 	            );
 	        });
+
+	        // for scroll width
+	        if (this.props.useFixedHeader) {
+	            nodes.push(React.createElement("th", { style: { width: 10 } }));
+	        }
 
 
 	        return React.createElement(

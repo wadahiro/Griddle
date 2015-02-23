@@ -16,8 +16,10 @@ var GridTitle = React.createClass({
             headerStyle: null,
             useGriddleStyles: true,
             useGriddleIcons: true,
+            useFixedHeader: false,
             headerClassName: "",
-            headerStyles: {} };
+            headerStyles: {}
+        };
     },
     componentWillMount: function () {
         this.verifyProps();
@@ -77,6 +79,11 @@ var GridTitle = React.createClass({
                 sortComponent
             );
         });
+
+        // for scroll width
+        if (this.props.useFixedHeader) {
+            nodes.push(React.createElement("th", { style: { width: 10 } }));
+        }
 
 
         return React.createElement(
