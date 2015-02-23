@@ -202,7 +202,9 @@ var GridTable = React.createClass({
     var tableHeading = (this.props.showTableHeading ?
         <GridTitle useGriddleStyles={this.props.useGriddleStyles} useGriddleIcons={this.props.useGriddleIcons}
           sortSettings={this.props.sortSettings}
-          columnSettings={this.props.columnSettings}/>
+          columnSettings={this.props.columnSettings}
+          useFixedHeader={this.props.useFixedHeader}
+          />
         : "");
 
     //check to see if any of the rows have children... if they don't wrap everything in a tbody so the browser doesn't auto do this

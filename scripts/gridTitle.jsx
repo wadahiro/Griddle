@@ -13,8 +13,9 @@ var GridTitle = React.createClass({
            "headerStyle": null,
            "useGriddleStyles": true,
            "useGriddleIcons": true,
+           "useFixedHeader": false,
            "headerClassName": "",
-           "headerStyles": {},
+           "headerStyles": {}
         }
     },
     componentWillMount: function(){
@@ -70,6 +71,11 @@ var GridTitle = React.createClass({
           }
           return (<th onClick={columnIsSortable ? that.sort : null} data-title={col} className={columnSort} key={displayName} style={titleStyles}>{displayName}{sortComponent}</th>);
       });
+      
+      // for scroll width
+      if (this.props.useFixedHeader) {
+        nodes.push(<th style={{width: 10}}></th>);
+      }
 
 
       return(
