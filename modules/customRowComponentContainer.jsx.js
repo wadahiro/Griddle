@@ -1,7 +1,5 @@
 "use strict";
 
-/** @jsx React.DOM */
-
 /*
    Griddle - Simple Grid Component for React
    https://github.com/DynamicTyped/Griddle

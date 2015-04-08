@@ -7,6 +7,7 @@ var React = require("react");
 var GridTitle = require("./gridTitle.jsx");
 var GridRowContainer = require("./gridRowContainer.jsx");
 var ColumnProperties = require("./columnProperties.js");
+var RowProperties = require("./rowProperties.js");
 var _ = require("underscore");
 
 var GridTable = React.createClass({
@@ -15,6 +16,7 @@ var GridTable = React.createClass({
     return {
       data: [],
       columnSettings: null,
+      rowSettings: null,
       sortSettings: null,
       className: "",
       enableInfiniteScroll: false,
@@ -35,7 +37,9 @@ var GridTable = React.createClass({
       parentRowCollapsedComponent: "▶",
       parentRowExpandedComponent: "▼",
       externalLoadingComponent: null,
-      externalIsLoading: false };
+      externalIsLoading: false,
+      onRowClick: null
+    };
   },
   getInitialState: function () {
     return {
@@ -88,19 +92,26 @@ var GridTable = React.createClass({
     if (this.props.columnSettings === null) {
       console.error("gridTable: The columnSettings prop is null and it shouldn't be");
     }
+    if (this.props.rowSettings === null) {
+      console.error("gridTable: The rowSettings prop is null and it shouldn't be");
+    }
   },
   getAdjustedRowHeight: function () {
     return this.props.rowHeight + this.props.paddingHeight * 2; // account for padding.
   },
-  getNodes: function () {
+  getNodeContent: function () {
     this.verifyProps();
     var that = this;
+
+    //figure out if we need to wrap the group in one tbody or many
+    var anyHasChildren = false;
 
     // If the data is still being loaded, don't build the nodes unless this is an infinite scroll table.
     if (!this.props.externalIsLoading || this.props.enableInfiniteScroll) {
       var nodeData = that.props.data;
       var aboveSpacerRow = null;
       var belowSpacerRow = null;
+      var usingDefault = false;
 
       // If we have a row height specified, only render what's going to be visible.
       if (this.props.enableInfiniteScroll && this.props.rowHeight !== null && this.refs.scrollable !== undefined) {
@@ -112,18 +123,18 @@ var GridTable = React.createClass({
         var displayEnd = Math.min(displayStart + visibleRecordCount * 1.25, this.props.data.length - 1);
 
         // Split the amount of nodes.
-        nodeData = nodeData.slice(displayStart, displayEnd);
+        nodeData = nodeData.slice(displayStart, displayEnd + 1);
 
         // Set the above and below nodes.
         var aboveSpacerRowStyle = { height: displayStart * adjustedHeight + "px" };
-        aboveSpacerRow = React.createElement("tr", { style: aboveSpacerRowStyle });
+        aboveSpacerRow = React.createElement("tr", { key: "above-" + aboveSpacerRowStyle.height, style: aboveSpacerRowStyle });
         var belowSpacerRowStyle = { height: (this.props.data.length - displayEnd) * adjustedHeight + "px" };
-        belowSpacerRow = React.createElement("tr", { style: belowSpacerRowStyle });
+        belowSpacerRow = React.createElement("tr", { key: "below-" + belowSpacerRowStyle.height, style: belowSpacerRowStyle });
       }
 
       var nodes = nodeData.map(function (row, index) {
-        var propIndex = that.props.data.indexOf(row);
         var hasChildren = typeof row.children !== "undefined" && row.children.length > 0;
+        var uniqueId = that.props.rowSettings.getRowKey(row);
 
         //at least one item in the group has children.
         if (hasChildren) {
@@ -133,8 +144,8 @@ var GridTable = React.createClass({
         return React.createElement(GridRowContainer, { useGriddleStyles: that.props.useGriddleStyles, isSubGriddle: that.props.isSubGriddle,
           parentRowExpandedClassName: that.props.parentRowExpandedClassName, parentRowCollapsedClassName: that.props.parentRowCollapsedClassName,
           parentRowExpandedComponent: that.props.parentRowExpandedComponent, parentRowCollapsedComponent: that.props.parentRowCollapsedComponent,
-          data: row, key: propIndex, columnSettings: that.props.columnSettings, paddingHeight: that.props.paddingHeight, rowHeight: that.props.rowHeight,
-          uniqueId: _.uniqueId("grid_row"), hasChildren: hasChildren, tableClassName: that.props.className });
+          data: row, key: uniqueId + "-container", uniqueId: uniqueId, columnSettings: that.props.columnSettings, rowSettings: that.props.rowSettings, paddingHeight: that.props.paddingHeight,
+          rowHeight: that.props.rowHeight, hasChildren: hasChildren, tableClassName: that.props.className, onRowClick: that.props.onRowClick });
       });
 
       // Add the spacer rows for nodes we're not rendering.
@@ -146,18 +157,27 @@ var GridTable = React.createClass({
       }
 
       // Send back the nodes.
-      return nodes;
+      return {
+        nodes: nodes,
+        anyHasChildren: anyHasChildren
+      };
     } else {
       return null;
     }
   },
   render: function () {
     var that = this;
-    //figure out if we need to wrap the group in one tbody or many
+    var nodes = [];
+
+    // for if we need to wrap the group in one tbody or many
     var anyHasChildren = false;
 
     // Grab the nodes to render
-    var nodes = this.getNodes();
+    var nodeContent = this.getNodeContent();
+    if (nodeContent) {
+      nodes = nodeContent.nodes;
+      anyHasChildren = nodeContent.anyHasChildren;
+    }
 
     var gridStyle = null;
     var loadingContent = null;
@@ -218,8 +238,8 @@ var GridTable = React.createClass({
     var tableHeading = this.props.showTableHeading ? React.createElement(GridTitle, { useGriddleStyles: this.props.useGriddleStyles, useGriddleIcons: this.props.useGriddleIcons,
       sortSettings: this.props.sortSettings,
       columnSettings: this.props.columnSettings,
-      useFixedHeader: this.props.useFixedHeader
-    }) : "";
+      useFixedHeader: this.props.useFixedHeader,
+      rowSettings: this.props.rowSettings }) : "";
 
     //check to see if any of the rows have children... if they don't wrap everything in a tbody so the browser doesn't auto do this
     if (!anyHasChildren) {

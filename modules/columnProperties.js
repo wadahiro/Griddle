@@ -57,28 +57,24 @@ var ColumnProperties = (function () {
       writable: true,
       configurable: true
     },
-    isColumnSortable: {
-      value: function isColumnSortable(name) {
-        var meta = this.getColumnMetadataByName(name);
+    getMetadataColumnProperty: {
+      value: function getMetadataColumnProperty(columnName, propertyName, defaultValue) {
+        var meta = this.getColumnMetadataByName(columnName);
 
-        //allow sort if meta isn't there
+        //send back the default value if meta isn't there
         if (typeof meta === "undefined" || meta === null) {
-          return true;
-        }return meta.hasOwnProperty("sortable") ? meta.sortable : true;
+          return defaultValue;
+        }return meta.hasOwnProperty(propertyName) ? meta[propertyName] : defaultValue;
       },
       writable: true,
       configurable: true
     },
-    getColumns: {
-      value: function getColumns() {
+    orderColumns: {
+      value: function orderColumns(cols) {
         var _this = this;
         var ORDER_MAX = 100;
-        //if we didn't set default or filter
-        var filteredColumns = this.filteredColumns.length === 0 ? this.allColumns : this.filteredColumns;
 
-        filteredColumns = _.difference(filteredColumns, this.metadataColumns);
-
-        filteredColumns = _.sortBy(filteredColumns, function (item) {
+        var orderedColumns = _.sortBy(cols, function (item) {
           var metaItem = _.findWhere(_this.columnMetadata, { columnName: item });
 
           if (typeof metaItem === "undefined" || metaItem === null || isNaN(metaItem.order)) {
@@ -87,6 +83,20 @@ var ColumnProperties = (function () {
 
           return metaItem.order;
         });
+
+        return orderedColumns;
+      },
+      writable: true,
+      configurable: true
+    },
+    getColumns: {
+      value: function getColumns() {
+        //if we didn't set default or filter
+        var filteredColumns = this.filteredColumns.length === 0 ? this.allColumns : this.filteredColumns;
+
+        filteredColumns = _.difference(filteredColumns, this.metadataColumns);
+
+        filteredColumns = this.orderColumns(filteredColumns);
 
         return filteredColumns;
       },

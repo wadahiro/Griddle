@@ -67,7 +67,7 @@ var GridSettings = React.createClass({
                 }
                 return React.createElement(
                     "div",
-                    { className: "griddle-column-selection checkbox", style: that.props.useGriddleStyles ? { float: "left", width: "20%" } : null },
+                    { className: "griddle-column-selection checkbox", key: col, style: that.props.useGriddleStyles ? { float: "left", width: "20%" } : null },
                     React.createElement(
                         "label",
                         null,
