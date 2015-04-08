@@ -305,6 +305,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setState(state);
 	    },
 	    componentWillReceiveProps: function (nextProps) {
+	        this.props.resultsPerPage = nextProps.resultsPerPage;
 	        this.setMaxPage(nextProps.results);
 	    },
 	    getInitialState: function () {
