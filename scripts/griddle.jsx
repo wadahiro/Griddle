@@ -480,7 +480,7 @@ var Griddle = React.createClass({
         return (
           <div className="griddle-footer">
               {this.props.useCustomPagerComponent ?
-                  <CustomPaginationContainer next={this.nextPage} previous={this.previousPage} currentPage={currentPage} maxPage={maxPage} setPage={this.setPage} nextText={this.props.nextText} previousText={this.props.previousText} resultsPerPage={this.props.resultsPerPage} customPagerComponent={this.props.customPagerComponent}/> :
+                  <CustomPaginationContainer next={this.nextPage} previous={this.previousPage} currentPage={currentPage} maxPage={maxPage} setPage={this.setPage} nextText={this.props.nextText} previousText={this.props.previousText} resultsPerPage={this.props.resultsPerPage} totalResults={this.props.results.length} filteredResults={this.getCurrentResults().length} customPagerComponent={this.props.customPagerComponent}/> :
                   <GridPagination useGriddleStyles={this.props.useGriddleStyles} next={this.nextPage} previous={this.previousPage} nextClassName={this.props.nextClassName} nextIconComponent={this.props.nextIconComponent} previousClassName={this.props.previousClassName} previousIconComponent={this.props.previousIconComponent} currentPage={currentPage} maxPage={maxPage} setPage={this.setPage} nextText={this.props.nextText} previousText={this.props.previousText}/>
               }
           </div>

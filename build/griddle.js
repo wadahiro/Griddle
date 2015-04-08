@@ -547,7 +547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return React.createElement(
 	            "div",
 	            { className: "griddle-footer" },
-	            this.props.useCustomPagerComponent ? React.createElement(CustomPaginationContainer, { next: this.nextPage, previous: this.previousPage, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText, resultsPerPage: this.props.resultsPerPage, customPagerComponent: this.props.customPagerComponent }) : React.createElement(GridPagination, { useGriddleStyles: this.props.useGriddleStyles, next: this.nextPage, previous: this.previousPage, nextClassName: this.props.nextClassName, nextIconComponent: this.props.nextIconComponent, previousClassName: this.props.previousClassName, previousIconComponent: this.props.previousIconComponent, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText })
+	            this.props.useCustomPagerComponent ? React.createElement(CustomPaginationContainer, { next: this.nextPage, previous: this.previousPage, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText, resultsPerPage: this.props.resultsPerPage, totalResults: this.props.results.length, filteredResults: this.getCurrentResults().length, customPagerComponent: this.props.customPagerComponent }) : React.createElement(GridPagination, { useGriddleStyles: this.props.useGriddleStyles, next: this.nextPage, previous: this.previousPage, nextClassName: this.props.nextClassName, nextIconComponent: this.props.nextIconComponent, previousClassName: this.props.previousClassName, previousIconComponent: this.props.previousIconComponent, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText })
 	        );
 	    },
 	    getColumnSelectorSection: function (keys, cols) {
@@ -1651,7 +1651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      previousText: "",
 	      currentPage: 0,
 	      customPagerComponent: {},
-	      resultsPerPage: 5
+	      resultsPerPage: 5,
+	      totalResults: 0,
+	      filteredResults: 0
 	    };
 	  },
 	  render: function () {
@@ -1662,7 +1664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return React.createElement("div", null);
 	    }
 
-	    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next, resultsPerPage: this.props.resultsPerPage });
+	    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next, resultsPerPage: this.props.resultsPerPage, totalResults: this.props.totalResults, filteredResults: this.props.filteredResults });
 	  }
 	});
 

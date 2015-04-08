@@ -18,7 +18,9 @@ var CustomPaginationContainer = React.createClass({
       previousText: "",
       currentPage: 0,
       customPagerComponent: {},
-      resultsPerPage: 5
+      resultsPerPage: 5,
+      totalResults: 0,
+      filteredResults: 0
     };
   },
   render: function () {
@@ -29,7 +31,7 @@ var CustomPaginationContainer = React.createClass({
       return React.createElement("div", null);
     }
 
-    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next, resultsPerPage: this.props.resultsPerPage });
+    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next, resultsPerPage: this.props.resultsPerPage, totalResults: this.props.totalResults, filteredResults: this.props.filteredResults });
   }
 });
 
