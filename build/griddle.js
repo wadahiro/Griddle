@@ -71,15 +71,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	   See License / Disclaimer https://raw.githubusercontent.com/DynamicTyped/Griddle/master/LICENSE
 	*/
 	var React = __webpack_require__(2);
-	var GridTable = __webpack_require__(5);
-	var GridFilter = __webpack_require__(6);
-	var GridPagination = __webpack_require__(7);
-	var GridSettings = __webpack_require__(8);
-	var GridNoData = __webpack_require__(9);
-	var CustomRowComponentContainer = __webpack_require__(10);
-	var CustomPaginationContainer = __webpack_require__(11);
-	var ColumnProperties = __webpack_require__(12);
-	var RowProperties = __webpack_require__(4);
+	var GridTable = __webpack_require__(6);
+	var GridFilter = __webpack_require__(7);
+	var GridPagination = __webpack_require__(8);
+	var GridSettings = __webpack_require__(9);
+	var GridNoData = __webpack_require__(10);
+	var CustomRowComponentContainer = __webpack_require__(11);
+	var CustomPaginationContainer = __webpack_require__(12);
+	var ColumnProperties = __webpack_require__(4);
+	var RowProperties = __webpack_require__(5);
 	var _ = __webpack_require__(3);
 
 	var Griddle = React.createClass({
@@ -547,7 +547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return React.createElement(
 	            "div",
 	            { className: "griddle-footer" },
-	            this.props.useCustomPagerComponent ? React.createElement(CustomPaginationContainer, { next: this.nextPage, previous: this.previousPage, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText, customPagerComponent: this.props.customPagerComponent }) : React.createElement(GridPagination, { useGriddleStyles: this.props.useGriddleStyles, next: this.nextPage, previous: this.previousPage, nextClassName: this.props.nextClassName, nextIconComponent: this.props.nextIconComponent, previousClassName: this.props.previousClassName, previousIconComponent: this.props.previousIconComponent, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText })
+	            this.props.useCustomPagerComponent ? React.createElement(CustomPaginationContainer, { next: this.nextPage, previous: this.previousPage, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText, resultsPerPage: this.props.resultsPerPage, customPagerComponent: this.props.customPagerComponent }) : React.createElement(GridPagination, { useGriddleStyles: this.props.useGriddleStyles, next: this.nextPage, previous: this.previousPage, nextClassName: this.props.nextClassName, nextIconComponent: this.props.nextIconComponent, previousClassName: this.props.previousClassName, previousIconComponent: this.props.previousIconComponent, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText })
 	        );
 	    },
 	    getColumnSelectorSection: function (keys, cols) {
@@ -727,6 +727,122 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(3);
 
+	var ColumnProperties = (function () {
+	  function ColumnProperties() {
+	    var allColumns = arguments[0] === undefined ? [] : arguments[0];
+	    var filteredColumns = arguments[1] === undefined ? [] : arguments[1];
+	    var childrenColumnName = arguments[2] === undefined ? "children" : arguments[2];
+	    var columnMetadata = arguments[3] === undefined ? [] : arguments[3];
+	    var metadataColumns = arguments[4] === undefined ? [] : arguments[4];
+	    _classCallCheck(this, ColumnProperties);
+
+	    this.allColumns = allColumns;
+	    this.filteredColumns = filteredColumns;
+	    this.childrenColumnName = childrenColumnName;
+	    this.columnMetadata = columnMetadata;
+	    this.metadataColumns = metadataColumns;
+	  }
+
+	  _prototypeProperties(ColumnProperties, null, {
+	    getMetadataColumns: {
+	      value: function getMetadataColumns() {
+	        var meta = _.map(_.where(this.columnMetadata, { visible: false }), function (item) {
+	          return item.columnName;
+	        });
+	        if (meta.indexOf(this.childrenColumnName) < 0) {
+	          meta.push(this.childrenColumnName);
+	        }
+	        return meta.concat(this.metadataColumns);
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getVisibleColumnCount: {
+	      value: function getVisibleColumnCount() {
+	        return this.getColumns().length;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getColumnMetadataByName: {
+	      value: function getColumnMetadataByName(name) {
+	        return _.findWhere(this.columnMetadata, { columnName: name });
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    hasColumnMetadata: {
+	      value: function hasColumnMetadata() {
+	        return this.columnMetadata !== null && this.columnMetadata.length > 0;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getMetadataColumnProperty: {
+	      value: function getMetadataColumnProperty(columnName, propertyName, defaultValue) {
+	        var meta = this.getColumnMetadataByName(columnName);
+
+	        //send back the default value if meta isn't there
+	        if (typeof meta === "undefined" || meta === null) {
+	          return defaultValue;
+	        }return meta.hasOwnProperty(propertyName) ? meta[propertyName] : defaultValue;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    orderColumns: {
+	      value: function orderColumns(cols) {
+	        var _this = this;
+	        var ORDER_MAX = 100;
+
+	        var orderedColumns = _.sortBy(cols, function (item) {
+	          var metaItem = _.findWhere(_this.columnMetadata, { columnName: item });
+
+	          if (typeof metaItem === "undefined" || metaItem === null || isNaN(metaItem.order)) {
+	            return ORDER_MAX;
+	          }
+
+	          return metaItem.order;
+	        });
+
+	        return orderedColumns;
+	      },
+	      writable: true,
+	      configurable: true
+	    },
+	    getColumns: {
+	      value: function getColumns() {
+	        //if we didn't set default or filter
+	        var filteredColumns = this.filteredColumns.length === 0 ? this.allColumns : this.filteredColumns;
+
+	        filteredColumns = _.difference(filteredColumns, this.metadataColumns);
+
+	        filteredColumns = this.orderColumns(filteredColumns);
+
+	        return filteredColumns;
+	      },
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+
+	  return ColumnProperties;
+	})();
+
+	module.exports = ColumnProperties;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	var _ = __webpack_require__(3);
+
 	var RowProperties = (function () {
 	  function RowProperties() {
 	    var rowMetadata = arguments[0] === undefined ? {} : arguments[0];
@@ -796,7 +912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = RowProperties;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -807,8 +923,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var React = __webpack_require__(2);
 	var GridTitle = __webpack_require__(13);
 	var GridRowContainer = __webpack_require__(14);
-	var ColumnProperties = __webpack_require__(12);
-	var RowProperties = __webpack_require__(4);
+	var ColumnProperties = __webpack_require__(4);
+	var RowProperties = __webpack_require__(5);
 	var _ = __webpack_require__(3);
 
 	var GridTable = React.createClass({
@@ -1134,7 +1250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GridTable;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1166,7 +1282,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GridFilter;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1275,7 +1391,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GridPagination;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1433,7 +1549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GridSettings;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1464,7 +1580,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = GridNoData;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1512,7 +1628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CustomRowComponentContainer;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1534,7 +1650,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nextText: "",
 	      previousText: "",
 	      currentPage: 0,
-	      customPagerComponent: {}
+	      customPagerComponent: {},
+	      resultsPerPage: 5
 	    };
 	  },
 	  render: function () {
@@ -1545,127 +1662,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return React.createElement("div", null);
 	    }
 
-	    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next });
+	    return React.createElement(that.props.customPagerComponent, { maxPage: this.props.maxPage, nextText: this.props.nextText, previousText: this.props.previousText, currentPage: this.props.currentPage, setPage: this.props.setPage, previous: this.props.previous, next: this.props.next, resultsPerPage: this.props.resultsPerPage });
 	  }
 	});
 
 	module.exports = CustomPaginationContainer;
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	var _ = __webpack_require__(3);
-
-	var ColumnProperties = (function () {
-	  function ColumnProperties() {
-	    var allColumns = arguments[0] === undefined ? [] : arguments[0];
-	    var filteredColumns = arguments[1] === undefined ? [] : arguments[1];
-	    var childrenColumnName = arguments[2] === undefined ? "children" : arguments[2];
-	    var columnMetadata = arguments[3] === undefined ? [] : arguments[3];
-	    var metadataColumns = arguments[4] === undefined ? [] : arguments[4];
-	    _classCallCheck(this, ColumnProperties);
-
-	    this.allColumns = allColumns;
-	    this.filteredColumns = filteredColumns;
-	    this.childrenColumnName = childrenColumnName;
-	    this.columnMetadata = columnMetadata;
-	    this.metadataColumns = metadataColumns;
-	  }
-
-	  _prototypeProperties(ColumnProperties, null, {
-	    getMetadataColumns: {
-	      value: function getMetadataColumns() {
-	        var meta = _.map(_.where(this.columnMetadata, { visible: false }), function (item) {
-	          return item.columnName;
-	        });
-	        if (meta.indexOf(this.childrenColumnName) < 0) {
-	          meta.push(this.childrenColumnName);
-	        }
-	        return meta.concat(this.metadataColumns);
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    getVisibleColumnCount: {
-	      value: function getVisibleColumnCount() {
-	        return this.getColumns().length;
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    getColumnMetadataByName: {
-	      value: function getColumnMetadataByName(name) {
-	        return _.findWhere(this.columnMetadata, { columnName: name });
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    hasColumnMetadata: {
-	      value: function hasColumnMetadata() {
-	        return this.columnMetadata !== null && this.columnMetadata.length > 0;
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    getMetadataColumnProperty: {
-	      value: function getMetadataColumnProperty(columnName, propertyName, defaultValue) {
-	        var meta = this.getColumnMetadataByName(columnName);
-
-	        //send back the default value if meta isn't there
-	        if (typeof meta === "undefined" || meta === null) {
-	          return defaultValue;
-	        }return meta.hasOwnProperty(propertyName) ? meta[propertyName] : defaultValue;
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    orderColumns: {
-	      value: function orderColumns(cols) {
-	        var _this = this;
-	        var ORDER_MAX = 100;
-
-	        var orderedColumns = _.sortBy(cols, function (item) {
-	          var metaItem = _.findWhere(_this.columnMetadata, { columnName: item });
-
-	          if (typeof metaItem === "undefined" || metaItem === null || isNaN(metaItem.order)) {
-	            return ORDER_MAX;
-	          }
-
-	          return metaItem.order;
-	        });
-
-	        return orderedColumns;
-	      },
-	      writable: true,
-	      configurable: true
-	    },
-	    getColumns: {
-	      value: function getColumns() {
-	        //if we didn't set default or filter
-	        var filteredColumns = this.filteredColumns.length === 0 ? this.allColumns : this.filteredColumns;
-
-	        filteredColumns = _.difference(filteredColumns, this.metadataColumns);
-
-	        filteredColumns = this.orderColumns(filteredColumns);
-
-	        return filteredColumns;
-	      },
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-
-	  return ColumnProperties;
-	})();
-
-	module.exports = ColumnProperties;
 
 /***/ },
 /* 13 */
@@ -1678,7 +1679,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	*/
 	var React = __webpack_require__(2);
 	var _ = __webpack_require__(3);
-	var ColumnProperties = __webpack_require__(12);
+	var ColumnProperties = __webpack_require__(4);
 
 	var GridTitle = React.createClass({
 	    displayName: "GridTitle",
@@ -1786,7 +1787,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	*/
 	var React = __webpack_require__(2);
 	var GridRow = __webpack_require__(15);
-	var ColumnProperties = __webpack_require__(12);
+	var ColumnProperties = __webpack_require__(4);
 
 	var GridRowContainer = React.createClass({
 	  displayName: "GridRowContainer",
@@ -1888,7 +1889,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	*/
 	var React = __webpack_require__(2);
 	var _ = __webpack_require__(3);
-	var ColumnProperties = __webpack_require__(12);
+	var ColumnProperties = __webpack_require__(4);
 
 	var GridRow = React.createClass({
 	    displayName: "GridRow",
