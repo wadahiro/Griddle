@@ -80,7 +80,7 @@ var GridTitle = React.createClass({
 
         // for scroll width
         if (this.props.useFixedHeader) {
-            nodes.push(React.createElement("th", { style: { width: 10 } }));
+            nodes.push(React.createElement("th", { key: "__fixed_th__", style: { width: 10 } }));
         }
 
         //Get the row from the row settings.
