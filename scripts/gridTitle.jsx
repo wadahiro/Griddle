@@ -57,6 +57,8 @@ var GridTitle = React.createClass({
 
           columnSort = meta == null ? columnSort : (columnSort && (columnSort + " ")||columnSort) + that.props.columnSettings.getMetadataColumnProperty(col, "cssClassName", "");
 
+          titleStyles = {};
+          
           if (that.props.useGriddleStyles){
             titleStyles = {
               backgroundColor: "#EDEDEF",
@@ -66,6 +68,11 @@ var GridTitle = React.createClass({
               padding: "5px",
               cursor: columnIsSortable ? "pointer" : "default"
             }
+          }
+          
+          var width = that.props.columnSettings.getMetadataColumnProperty(col, "width", null);
+          if (width) {
+              titleStyles.width = width;
           }
 
           return (<th onClick={columnIsSortable ? that.sort : null} data-title={col} className={columnSort} key={displayName} style={titleStyles}>{displayName}{sortComponent}</th>);
