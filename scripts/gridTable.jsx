@@ -17,6 +17,7 @@ var GridTable = React.createClass({
       "sortSettings": null,
       "className": "",
       "enableInfiniteScroll": false,
+      "enableScrollX": false,
       "nextPage": null,
       "hasMorePages": false,
       "useFixedHeader": false,
@@ -259,27 +260,38 @@ var GridTable = React.createClass({
         height: this.props.bodyHeight + "px",
         width: "100%"
       };
+    
+      if (this.props.enableScrollX) {
+        gridStyle.overflowX = "scroll";
+      }
       
       return <div>
-              <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
+              <table className={this.props.className} style={tableStyle||null}>
                 {tableHeading}
               </table>
               <div ref="scrollable" onScroll={this.gridScroll} style={gridStyle}>
-                <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
+                <table className={this.props.className} style={tableStyle||null}>
                     {nodes}
                     {loadingContent}
                 </table>
               </div>
               <div>
-                <table style={(this.props.useGriddleStyles&&tableStyle)||null}>
+                <table style={tableStyle||null}>
                     {pagingContent}
                 </table>
               </div>
             </div>;
     }
+    
+    if (this.props.enableScrollX) {
+      gridStyle = {
+        overflowX: "scroll",
+        width: "100%"
+      }
+    }
 
     return  <div ref="scrollable" onScroll={this.gridScroll} style={gridStyle}>
-              <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
+              <table className={this.props.className} style={tableStyle||null}>
                   {tableHeading}
                   {nodes}
                   {loadingContent}

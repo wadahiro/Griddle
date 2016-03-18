@@ -72,6 +72,7 @@ var Griddle = React.createClass({
             "externalLoadingComponent": null,
             "externalIsLoading": false,
             "enableInfiniteScroll": false,
+            "enableScrollX": false,
             "bodyHeight": null,
             "paddingHeight": 5,
             "rowHeight": 25,
@@ -519,6 +520,7 @@ var Griddle = React.createClass({
                 data={data}
                 className={this.props.tableClassName}
                 enableInfiniteScroll={this.isInfiniteScrollEnabled()}
+                enableScrollX={this.props.enableScrollX}
                 nextPage={this.nextPage}
                 showTableHeading={this.props.showTableHeading}
                 useFixedHeader={this.props.useFixedHeader}
