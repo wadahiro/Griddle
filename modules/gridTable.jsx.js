@@ -20,6 +20,7 @@ var GridTable = React.createClass({
       sortSettings: null,
       className: "",
       enableInfiniteScroll: false,
+      enableScrollX: false,
       nextPage: null,
       hasMorePages: false,
       useFixedHeader: false,
@@ -145,7 +146,7 @@ var GridTable = React.createClass({
           parentRowExpandedClassName: that.props.parentRowExpandedClassName, parentRowCollapsedClassName: that.props.parentRowCollapsedClassName,
           parentRowExpandedComponent: that.props.parentRowExpandedComponent, parentRowCollapsedComponent: that.props.parentRowCollapsedComponent,
           data: row, key: uniqueId + "-container", uniqueId: uniqueId, columnSettings: that.props.columnSettings, rowSettings: that.props.rowSettings, paddingHeight: that.props.paddingHeight,
-          rowHeight: that.props.rowHeight, hasChildren: hasChildren, tableClassName: that.props.className, onRowClick: that.props.onRowClick });
+          rowHeight: that.props.rowHeight, hasChildren: hasChildren, tableClassName: that.props.className, onRowClick: that.props.onRowClick, enableScrollX: that.props.enableScrollX });
       });
 
       // Add the spacer rows for nodes we're not rendering.
@@ -194,7 +195,7 @@ var GridTable = React.createClass({
       gridStyle = {
         position: "relative",
         overflowY: "scroll",
-        height: this.props.bodyHeight + "px",
+        height: this.props.bodyHeight,
         width: "100%"
       };
     }
@@ -259,18 +260,29 @@ var GridTable = React.createClass({
         color: "#222"
       } : null;
       pagingContent = React.createElement(
-        "tbody",
-        null,
+        "table",
+        { className: "griddle-pager-container", style: tableStyle },
         React.createElement(
-          "tr",
+          "tbody",
           null,
           React.createElement(
-            "td",
-            { colSpan: this.props.columnSettings.getVisibleColumnCount(), style: pagingStyles, className: "footer-container" },
-            this.props.pagingContent
+            "tr",
+            null,
+            React.createElement(
+              "td",
+              { colSpan: this.props.columnSettings.getVisibleColumnCount(), style: pagingStyles, className: "footer-container" },
+              this.props.pagingContent
+            )
           )
         )
       );
+    }
+
+    if (this.props.enableScrollX) {
+      gridStyle = {
+        overflowX: "scroll",
+        width: "100%"
+      };
     }
 
     // If we have a fixed header, split into two tables.
@@ -278,55 +290,81 @@ var GridTable = React.createClass({
       if (this.props.useGriddleStyles) {
         tableStyle.tableLayout = "fixed";
       }
-      gridStyle = {
+      var gridHeaderStyle = {
+        overflowX: "hidden",
+        width: "100%"
+      };
+
+      var gridBodyStyle = {
         position: "relative",
         overflowY: "scroll",
-        height: this.props.bodyHeight + "px",
+        overflowX: "hidden",
+        height: this.props.bodyHeight,
         width: "100%"
       };
 
       return React.createElement(
         "div",
-        null,
+        { ref: "scrollable", onScroll: this.gridScroll },
         React.createElement(
-          "table",
-          { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null },
-          tableHeading
+          "div",
+          { ref: "scrollableHeader", style: gridHeaderStyle },
+          React.createElement(
+            "table",
+            { className: this.props.className, style: tableStyle },
+            tableHeading
+          )
         ),
         React.createElement(
           "div",
-          { ref: "scrollable", onScroll: this.gridScroll, style: gridStyle },
+          { ref: "scrollableBody", style: gridBodyStyle },
           React.createElement(
             "table",
-            { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null },
+            { className: this.props.className, style: tableStyle },
             nodes,
             loadingContent
           )
         ),
         React.createElement(
           "div",
-          null,
-          React.createElement(
+          { style: gridStyle, onScroll: this.scrollX },
+          this.props.columnFilters && React.createElement(
             "table",
-            { style: this.props.useGriddleStyles && tableStyle || null },
-            pagingContent
+            { className: "griddle-column-filters-container " + this.props.className, style: tableStyle },
+            this.props.columnFilters
           )
-        )
+        ),
+        pagingContent
       );
     }
 
     return React.createElement(
       "div",
-      { ref: "scrollable", onScroll: this.gridScroll, style: gridStyle },
+      { ref: "scrollable", onScroll: this.gridScroll },
       React.createElement(
-        "table",
-        { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null },
-        tableHeading,
-        nodes,
-        loadingContent,
-        pagingContent
-      )
+        "div",
+        { style: gridStyle },
+        React.createElement(
+          "table",
+          { className: this.props.className, style: tableStyle },
+          tableHeading,
+          nodes,
+          loadingContent
+        ),
+        this.props.columnFilters && React.createElement(
+          "table",
+          { className: "griddle-column-filters-container " + this.props.className, style: tableStyle },
+          this.props.columnFilters
+        )
+      ),
+      pagingContent
     );
+  },
+
+  scrollX: function scrollX(e) {
+    var scrollLeft = e.target.scrollLeft;
+    this.refs.scrollableHeader.getDOMNode().scrollLeft = scrollLeft;
+    this.refs.scrollableBody.getDOMNode().scrollLeft = scrollLeft;
   }
 });
 

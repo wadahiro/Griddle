@@ -23,7 +23,8 @@ var GridRow = React.createClass({
         "parentRowExpandedClassName": "parent-row expanded",
         "parentRowCollapsedComponent": "▶",
         "parentRowExpandedComponent": "▼",
-        "onRowClick": null
+        "onRowClick": null,
+        "enableScrollX": false
       }
     },
     handleClick: function(e){
@@ -41,10 +42,10 @@ var GridRow = React.createClass({
     render: function() {
         this.verifyProps();
         var that = this;
-        var columnStyles = null;
+        var baseColumnStyles = {};
 
         if (this.props.useGriddleStyles) {
-          columnStyles = {
+          baseColumnStyles = {
             margin: "0",
             padding: that.props.paddingHeight + "px 5px " + that.props.paddingHeight + "px 5px",
             height: that.props.rowHeight? this.props.rowHeight - that.props.paddingHeight * 2 + "px" : null,
@@ -70,6 +71,7 @@ var GridRow = React.createClass({
         var nodes = data.map((col, index) => {
             var returnValue = null;
             var meta = this.props.columnSettings.getColumnMetadataByName(col[0]);
+            var columnStyles = _.extend({}, baseColumnStyles);
 
             //todo: Make this not as ridiculous looking
             var firstColAppend = index === 0 && this.props.hasChildren && this.props.showChildren === false && this.props.useGriddleIcons ?
@@ -77,8 +79,13 @@ var GridRow = React.createClass({
               index === 0 && this.props.hasChildren && this.props.showChildren && this.props.useGriddleIcons ?
                 <span style={this.props.useGriddleStyles&&{fontSize: "10px"}}>{this.props.parentRowExpandedComponent}</span> : "";
 
+
             if(index === 0 && this.props.isChildRow && this.props.useGriddleStyles){
               columnStyles = _.extend(columnStyles, {paddingLeft:10})
+            }
+            
+            if (meta && meta.width) {
+                columnStyles.width = meta.width;
             }
 
             if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== "undefined"){
@@ -97,7 +104,11 @@ var GridRow = React.createClass({
         } else if (that.props.hasChildren){
             className = that.props.showChildren ? this.props.parentRowExpandedClassName : this.props.parentRowCollapsedClassName;
         }
-        return (<tr className={className}>{nodes}</tr>);
+        return (
+            <tr className={className}>
+                {nodes}
+            </tr>
+        );
     }
 });
 

@@ -26,7 +26,8 @@ var GridRow = React.createClass({
             parentRowExpandedClassName: "parent-row expanded",
             parentRowCollapsedComponent: "▶",
             parentRowExpandedComponent: "▼",
-            onRowClick: null
+            onRowClick: null,
+            enableScrollX: false
         };
     },
     handleClick: function (e) {
@@ -45,10 +46,10 @@ var GridRow = React.createClass({
         var _this = this;
         this.verifyProps();
         var that = this;
-        var columnStyles = null;
+        var baseColumnStyles = {};
 
         if (this.props.useGriddleStyles) {
-            columnStyles = {
+            baseColumnStyles = {
                 margin: "0",
                 padding: that.props.paddingHeight + "px 5px " + that.props.paddingHeight + "px 5px",
                 height: that.props.rowHeight ? this.props.rowHeight - that.props.paddingHeight * 2 + "px" : null,
@@ -74,6 +75,7 @@ var GridRow = React.createClass({
         var nodes = data.map(function (col, index) {
             var returnValue = null;
             var meta = _this.props.columnSettings.getColumnMetadataByName(col[0]);
+            var columnStyles = _.extend({}, baseColumnStyles);
 
             //todo: Make this not as ridiculous looking
             var firstColAppend = index === 0 && _this.props.hasChildren && _this.props.showChildren === false && _this.props.useGriddleIcons ? React.createElement(
@@ -86,8 +88,13 @@ var GridRow = React.createClass({
                 _this.props.parentRowExpandedComponent
             ) : "";
 
+
             if (index === 0 && _this.props.isChildRow && _this.props.useGriddleStyles) {
                 columnStyles = _.extend(columnStyles, { paddingLeft: 10 });
+            }
+
+            if (meta && meta.width) {
+                columnStyles.width = meta.width;
             }
 
             if (_this.props.columnSettings.hasColumnMetadata() && typeof meta !== "undefined") {

@@ -10,6 +10,7 @@
 var React = require("react");
 var GridTable = require("./gridTable.jsx");
 var GridFilter = require("./gridFilter.jsx");
+var GridColumnFilters = require("./gridColumnFilters.jsx");
 var GridPagination = require("./gridPagination.jsx");
 var GridSettings = require("./gridSettings.jsx");
 var GridNoData = require("./gridNoData.jsx");
@@ -47,6 +48,8 @@ var Griddle = React.createClass({
             //Any column in this list will be treated as metadata and will be passed through with the data but won't be rendered
             metadataColumns: [],
             showFilter: false,
+            showColumnFilters: false,
+            columnFiltersClassName: "",
             showSettings: false,
             useCustomRowComponent: false,
             useCustomGridComponent: false,
@@ -75,6 +78,7 @@ var Griddle = React.createClass({
             externalLoadingComponent: null,
             externalIsLoading: false,
             enableInfiniteScroll: false,
+            enableScrollX: false,
             bodyHeight: null,
             paddingHeight: 5,
             rowHeight: 25,
@@ -138,6 +142,50 @@ var Griddle = React.createClass({
 
         // Set the state.
         that.setState(updatedState);
+    },
+    setColumnFilters: function (updatedColumnFilters) {
+        var _this = this;
+        var updatedState = {
+            page: 0,
+            columnFilters: updatedColumnFilters
+        };
+
+        // Collect coulumnMetadata
+        var filteredMetadatas = Object.keys(updatedColumnFilters).filter(function (x) {
+            return updatedColumnFilters[x] !== "";
+        }).map(function (x) {
+            var metadata = _.find(_this.props.columnMetadata, function (y) {
+                return y.columnName === x;
+            });
+            return metadata;
+        });
+
+        if (filteredMetadatas.length > 0) {
+            updatedState.filteredResults = this.props.results.filter(function (row) {
+                var hit = filteredMetadatas.reduce(function (s, metadata) {
+                    var filterWord = updatedColumnFilters[metadata.columnName];
+                    var value = row[metadata.columnName];
+
+                    // 必要であればtranslateしたものでマッチング
+                    // value = translate($trans, value, metadata);
+
+                    var hit = (value || "").toString().toLowerCase().indexOf(filterWord.toLowerCase()) >= 0;
+
+                    // AND
+                    return s && hit;
+                }, true);
+                return hit;
+            });
+            // Update the max page.
+            updatedState.maxPage = this.getMaxPage(updatedState.filteredResults);
+        } else {
+            // Update the max page.
+            updatedState.maxPage = this.getMaxPage(this.props.results);
+            updatedState.filteredResults = null;
+        }
+
+        // Set the state.
+        this.setState(updatedState);
     },
     setPageSize: function (size) {
         if (this.props.useExternal) {
@@ -252,6 +300,7 @@ var Griddle = React.createClass({
             filteredResults: null,
             filteredColumns: [],
             filter: "",
+            columnFilters: {},
             sortColumn: this.props.initialSort,
             sortAscending: this.props.initialSortAscending,
             showColumnChooser: false
@@ -437,6 +486,9 @@ var Griddle = React.createClass({
     getFilter: function () {
         return this.props.showFilter && this.props.useCustomGridComponent === false ? React.createElement(GridFilter, { changeFilter: this.setFilter, placeholderText: this.props.filterPlaceholderText }) : "";
     },
+    getColumnFilters: function () {
+        return this.props.showColumnFilters && this.props.useCustomGridComponent === false ? React.createElement(GridColumnFilters, { columnFilters: this.state.columnFilters, handleFilter: this.setColumnFilters, columnSettings: this.columnSettings, useFixedHeader: this.props.useFixedHeader, columnFiltersClassName: this.props.columnFiltersClassName }) : null;
+    },
     getSettings: function () {
         return this.props.showSettings ? React.createElement(
             "button",
@@ -518,6 +570,7 @@ var Griddle = React.createClass({
                 columnSettings: this.columnSettings,
                 rowSettings: this.rowSettings,
                 sortSettings: sortProperties,
+                columnFilters: this.getColumnFilters(),
                 isSubGriddle: this.props.isSubGriddle,
                 useGriddleIcons: this.props.useGriddleIcons,
                 useFixedLayout: this.props.useFixedLayout,
@@ -526,6 +579,7 @@ var Griddle = React.createClass({
                 data: data,
                 className: this.props.tableClassName,
                 enableInfiniteScroll: this.isInfiniteScrollEnabled(),
+                enableScrollX: this.props.enableScrollX,
                 nextPage: this.nextPage,
                 showTableHeading: this.props.showTableHeading,
                 useFixedHeader: this.props.useFixedHeader,
@@ -573,6 +627,9 @@ var Griddle = React.createClass({
         return myReturn;
     },
     shouldShowNoDataSection: function (results) {
+        if (this.props.showColumnFilters) {
+            return false;
+        }
         return this.props.useExternal === false && (typeof results === "undefined" || results.length === 0) || this.props.useExternal === true && this.props.externalIsLoading === false && results.length === 0;
     },
     render: function () {

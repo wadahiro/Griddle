@@ -143,7 +143,7 @@ var GridTable = React.createClass({
             parentRowExpandedClassName={that.props.parentRowExpandedClassName} parentRowCollapsedClassName={that.props.parentRowCollapsedClassName}
             parentRowExpandedComponent={that.props.parentRowExpandedComponent} parentRowCollapsedComponent={that.props.parentRowCollapsedComponent}
             data={row} key={uniqueId + '-container'} uniqueId={uniqueId} columnSettings={that.props.columnSettings} rowSettings={that.props.rowSettings} paddingHeight={that.props.paddingHeight}
-            rowHeight={that.props.rowHeight} hasChildren={hasChildren} tableClassName={that.props.className} onRowClick={that.props.onRowClick} />)
+            rowHeight={that.props.rowHeight} hasChildren={hasChildren} tableClassName={that.props.className} onRowClick={that.props.onRowClick} enableScrollX={that.props.enableScrollX} />)
       });
 
       // Add the spacer rows for nodes we're not rendering.
@@ -192,7 +192,7 @@ var GridTable = React.createClass({
       gridStyle = {
         "position": "relative",
         "overflowY": "scroll",
-        "height": this.props.bodyHeight + "px",
+        "height": this.props.bodyHeight,
         "width": "100%"
       };
     }
@@ -242,63 +242,82 @@ var GridTable = React.createClass({
           color: "#222"
         }
         : null;
-      pagingContent = (<tbody><tr>
+      pagingContent = (<table className="griddle-pager-container" style={tableStyle}><tbody><tr>
           <td colSpan={this.props.columnSettings.getVisibleColumnCount()} style={pagingStyles} className="footer-container">
             {this.props.pagingContent}
           </td>
-        </tr></tbody>)
+        </tr></tbody></table>)
     }
 
-    // If we have a fixed header, split into two tables.
-    if (this.props.useFixedHeader){
-      if (this.props.useGriddleStyles) {
-        tableStyle.tableLayout = "fixed";
-      }
-      gridStyle = {
-        position: "relative",
-        overflowY: "scroll",
-        height: this.props.bodyHeight + "px",
-        width: "100%"
-      };
-    
-      if (this.props.enableScrollX) {
-        gridStyle.overflowX = "scroll";
-      }
-      
-      return <div>
-              <table className={this.props.className} style={tableStyle||null}>
-                {tableHeading}
-              </table>
-              <div ref="scrollable" onScroll={this.gridScroll} style={gridStyle}>
-                <table className={this.props.className} style={tableStyle||null}>
-                    {nodes}
-                    {loadingContent}
-                </table>
-              </div>
-              <div>
-                <table style={tableStyle||null}>
-                    {pagingContent}
-                </table>
-              </div>
-            </div>;
-    }
-    
     if (this.props.enableScrollX) {
       gridStyle = {
         overflowX: "scroll",
         width: "100%"
       }
     }
+    
+    // If we have a fixed header, split into two tables.
+    if (this.props.useFixedHeader){
+      if (this.props.useGriddleStyles) {
+        tableStyle.tableLayout = "fixed";
+      }
+      var gridHeaderStyle = {
+        overflowX: "hidden",
+        width: "100%"
+      }
+      
+      var gridBodyStyle = {
+        position: "relative",
+        overflowY: "scroll",
+        overflowX: "hidden",
+        height: this.props.bodyHeight,
+        width: "100%"
+      };
 
-    return  <div ref="scrollable" onScroll={this.gridScroll} style={gridStyle}>
-              <table className={this.props.className} style={tableStyle||null}>
-                  {tableHeading}
-                  {nodes}
-                  {loadingContent}
-                  {pagingContent}
-              </table>
+    return  <div ref="scrollable" onScroll={this.gridScroll}>
+              <div ref="scrollableHeader" style={gridHeaderStyle}>
+                <table className={this.props.className} style={tableStyle}>
+                    {tableHeading}
+                </table>
+              </div>
+              <div ref="scrollableBody" style={gridBodyStyle}>
+                <table className={this.props.className} style={tableStyle}>
+                    {nodes}
+                    {loadingContent}
+                </table>
+              </div>
+              <div style={gridStyle} onScroll={this.scrollX}>
+              { this.props.columnFilters &&
+                  <table className={`griddle-column-filters-container ${this.props.className}`} style={tableStyle}>
+                      {this.props.columnFilters}
+                  </table>
+              }
+              </div>
+              {pagingContent}
             </div>
-            
+    }
+
+    return  <div ref="scrollable" onScroll={this.gridScroll}>
+              <div style={gridStyle}>
+                <table className={this.props.className} style={tableStyle}>
+                    {tableHeading}
+                    {nodes}
+                    {loadingContent}
+                </table>
+                { this.props.columnFilters &&
+                    <table className={`griddle-column-filters-container ${this.props.className}`} style={tableStyle}>
+                        {this.props.columnFilters}
+                    </table>
+                }
+              </div>
+              {pagingContent}
+            </div>
+    },
+    
+    scrollX(e) {
+        const scrollLeft = e.target.scrollLeft;
+        this.refs.scrollableHeader.getDOMNode().scrollLeft = scrollLeft;
+        this.refs.scrollableBody.getDOMNode().scrollLeft = scrollLeft;
     }
 });
 

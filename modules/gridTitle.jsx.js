@@ -59,6 +59,8 @@ var GridTitle = React.createClass({
 
             columnSort = meta == null ? columnSort : (columnSort && columnSort + " " || columnSort) + that.props.columnSettings.getMetadataColumnProperty(col, "cssClassName", "");
 
+            titleStyles = {};
+
             if (that.props.useGriddleStyles) {
                 titleStyles = {
                     backgroundColor: "#EDEDEF",
@@ -68,6 +70,11 @@ var GridTitle = React.createClass({
                     padding: "5px",
                     cursor: columnIsSortable ? "pointer" : "default"
                 };
+            }
+
+            var width = that.props.columnSettings.getMetadataColumnProperty(col, "width", null);
+            if (width) {
+                titleStyles.width = width;
             }
 
             return React.createElement(
@@ -80,7 +87,7 @@ var GridTitle = React.createClass({
 
         // for scroll width
         if (this.props.useFixedHeader) {
-            nodes.push(React.createElement("th", { key: "__fixed_th__", style: { width: 10 } }));
+            nodes.push(React.createElement("th", { key: "__fixed_th__", className: "griddle-fixed-th" }));
         }
 
         //Get the row from the row settings.

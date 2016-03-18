@@ -1,0 +1,126 @@
+<div id="griddle-basic"></div>
+<div id="griddle-fixed-header"></div>
+<div id="griddle-scrollx"></div>
+<div id="griddle-fixed-header-scrollx"></div>
+
+<script type="text/jsx">
+
+var metadata = [
+{
+    "columnName": "name",
+    "order": 9,
+    "locked": false,
+    "visible": true,
+    "displayName": "Employee Name",
+    "width": 200
+  },
+  {
+    "columnName": "city",
+    "order": 8,
+    "locked": false,
+    "visible": true,
+    "width": 200
+  },
+  {
+    "columnName": "state",
+    "order": 7,
+    "locked": false,
+    "visible": true,
+    "width": 150
+  },
+  {
+    "columnName": "country",
+    "order": 6,
+    "locked": false,
+    "visible": true,
+    "width": 180
+  },
+  {
+    "columnName": "company",
+    "order": 5,
+    "locked": false,
+    "visible": true,
+    "width": 180
+  },
+  {
+    "columnName": "favoriteNumber",
+    "order":  4,
+    "locked": false,
+    "visible": true,
+    "displayName": "Favorite Number",
+    "width": 400
+  },
+  {
+    "columnName": "id",
+    "order":  1,
+    "locked": false,
+    "visible": true,
+    "displayName": "id",
+    "width": 30
+  }
+]
+
+var App = React.createClass({
+    reset(e) {
+        this.refs.griddle.setColumnFilters({});
+    },
+    
+    render() {
+        return (
+            <div>
+                <button onClick={this.reset}>Reset</button>
+                <Griddle
+                    ref="griddle"
+                    results={fakeData}
+                    resultsPerPage={5}
+                    useFixedLayout={false}
+                    enableScrollX={false}
+                    useGriddleStyles={false}
+                    showColumnFilters={true}
+                    columnMetadata={metadata}
+                    />
+            </div>
+        );
+    }
+});
+
+React.render(<App />, document.getElementById("griddle-basic"));
+     
+     
+React.render(<Griddle
+    results={fakeData}
+    resultsPerPage={100}
+    bodyHeight={300}
+    useFixedHeader={true}
+    useFixedLayout={false}
+    enableScrollX={false}
+    useGriddleStyles={false}
+    showColumnFilters={true}
+    columnMetadata={metadata}
+     />, document.getElementById("griddle-fixed-header"));
+     
+
+React.render(<Griddle
+    results={fakeData}
+    resultsPerPage={5}
+    useFixedHeader={false}
+    useFixedLayout={true}
+    enableScrollX={true}
+    useGriddleStyles={false}
+    showColumnFilters={true}
+    columnMetadata={metadata}
+     />, document.getElementById("griddle-scrollx"));
+     
+
+React.render(<Griddle
+    results={fakeData}
+    resultsPerPage={100}
+    bodyHeight={300}
+    useFixedHeader={true}
+    useFixedLayout={true}
+    enableScrollX={true}
+    useGriddleStyles={false}
+    showColumnFilters={true}
+    columnMetadata={metadata}
+     />, document.getElementById("griddle-fixed-header-scrollx"));
+</script>
