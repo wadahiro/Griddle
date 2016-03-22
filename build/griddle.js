@@ -1460,8 +1460,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            style: inputStyle,
 	                            readOnly: true })
 	                    );
-	                }),
-	                this.props.useFixedHeader && React.createElement("th", { key: "__fixed_th__", className: "griddle-fixed-th" })
+	                })
 	            )
 	        );
 	    },
@@ -1956,11 +1955,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                sortComponent
 	            );
 	        });
-
-	        // for scroll width
-	        if (this.props.useFixedHeader) {
-	            nodes.push(React.createElement("th", { key: "__fixed_th__", className: "griddle-fixed-th" }));
-	        }
 
 	        //Get the row from the row settings.
 	        var className = that.props.rowSettings && that.props.rowSettings.getHeaderRowMetadataClass() || null;

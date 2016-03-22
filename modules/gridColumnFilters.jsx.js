@@ -53,8 +53,7 @@ var GridColumnFilters = React.createClass({
                             style: inputStyle,
                             readOnly: true })
                     );
-                }),
-                this.props.useFixedHeader && React.createElement("th", { key: "__fixed_th__", className: "griddle-fixed-th" })
+                })
             )
         );
     },

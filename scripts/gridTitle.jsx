@@ -78,11 +78,6 @@ var GridTitle = React.createClass({
           return (<th onClick={columnIsSortable ? that.sort : null} data-title={col} className={columnSort} key={displayName} style={titleStyles}>{displayName}{sortComponent}</th>);
       });
       
-      // for scroll width
-      if (this.props.useFixedHeader) {
-        nodes.push(<th key='__fixed_th__' className='griddle-fixed-th'></th>);
-      }
-
       //Get the row from the row settings.
       var className = that.props.rowSettings&&that.props.rowSettings.getHeaderRowMetadataClass() || null;
 

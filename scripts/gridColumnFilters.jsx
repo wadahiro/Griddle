@@ -50,9 +50,6 @@ var GridColumnFilters = React.createClass({
                             </th>
                         );
                     })}
-                    {this.props.useFixedHeader &&
-                        <th key='__fixed_th__' className='griddle-fixed-th'></th>
-                    }
                   </tr>
             </thead>
         );
