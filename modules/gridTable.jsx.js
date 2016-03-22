@@ -291,7 +291,7 @@ var GridTable = React.createClass({
 
       var gridBodyStyle = {
         overflowY: "scroll",
-        overflowX: "hidden",
+        overflowX: "scroll",
         height: this.props.bodyHeight
         // set width with css
         // width: "calc(100% + 18px)"
@@ -302,7 +302,6 @@ var GridTable = React.createClass({
       };
 
       if (this.props.enableScrollX) {
-        gridBodyStyle.overflowX = "scroll";
         gridFooterStyle.overflowX = "auto";
       }
 

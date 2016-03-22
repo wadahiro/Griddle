@@ -1266,7 +1266,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var gridBodyStyle = {
 	        overflowY: "scroll",
-	        overflowX: "hidden",
+	        overflowX: "scroll",
 	        height: this.props.bodyHeight
 	        // set width with css
 	        // width: "calc(100% + 18px)"
@@ -1277,7 +1277,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 
 	      if (this.props.enableScrollX) {
-	        gridBodyStyle.overflowX = "scroll";
 	        gridFooterStyle.overflowX = "auto";
 	      }
 
@@ -2177,7 +2176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                columnStyles = _.extend(columnStyles, { paddingLeft: 10 });
 	            }
 
-	            if (meta && meta.width) {
+	            if (index === 0 && meta && meta.width) {
 	                columnStyles.width = meta.width;
 	            }
 

@@ -93,7 +93,7 @@ var GridRow = React.createClass({
                 columnStyles = _.extend(columnStyles, { paddingLeft: 10 });
             }
 
-            if (meta && meta.width) {
+            if (index === 0 && meta && meta.width) {
                 columnStyles.width = meta.width;
             }
 
