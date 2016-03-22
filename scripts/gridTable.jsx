@@ -274,7 +274,7 @@ var GridTable = React.createClass({
       
       if (this.props.enableScrollX) {
         gridBodyStyle.overflowX = "scroll";
-        gridFooterStyle.overflowX = "scroll";
+        gridFooterStyle.overflowX = "auto";
       }
       
       return <div ref="scrollable" className="griddle-scrolltable" onScroll={this.gridScroll}>
