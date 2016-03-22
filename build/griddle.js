@@ -142,6 +142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            externalIsLoading: false,
 	            enableInfiniteScroll: false,
 	            enableScrollX: false,
+	            scrollXType: "auto",
 	            bodyHeight: null,
 	            paddingHeight: 5,
 	            rowHeight: 25,
@@ -643,6 +644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                className: this.props.tableClassName,
 	                enableInfiniteScroll: this.isInfiniteScrollEnabled(),
 	                enableScrollX: this.props.enableScrollX,
+	                scrollXType: this.props.scrollXType,
 	                nextPage: this.nextPage,
 	                showTableHeading: this.props.showTableHeading,
 	                useFixedHeader: this.props.useFixedHeader,
@@ -996,6 +998,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      className: "",
 	      enableInfiniteScroll: false,
 	      enableScrollX: false,
+	      scrollXType: "auto",
 	      nextPage: null,
 	      hasMorePages: false,
 	      useFixedHeader: false,
@@ -1277,7 +1280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 
 	      if (this.props.enableScrollX) {
-	        gridFooterStyle.overflowX = "auto";
+	        gridFooterStyle.overflowX = this.props.scrollXType;
 	      }
 
 	      return React.createElement(
@@ -1325,7 +1328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (this.props.enableScrollX) {
 	      gridStyle = {
-	        overflowX: "scroll",
+	        overflowX: this.props.scrollXType,
 	        width: "100%"
 	      };
 	    }
@@ -2176,7 +2179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                columnStyles = _.extend(columnStyles, { paddingLeft: 10 });
 	            }
 
-	            if (index === 0 && meta && meta.width) {
+	            if (meta && meta.width) {
 	                columnStyles.width = meta.width;
 	            }
 

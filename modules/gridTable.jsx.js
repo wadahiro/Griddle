@@ -21,6 +21,7 @@ var GridTable = React.createClass({
       className: "",
       enableInfiniteScroll: false,
       enableScrollX: false,
+      scrollXType: "auto",
       nextPage: null,
       hasMorePages: false,
       useFixedHeader: false,
@@ -302,7 +303,7 @@ var GridTable = React.createClass({
       };
 
       if (this.props.enableScrollX) {
-        gridFooterStyle.overflowX = "auto";
+        gridFooterStyle.overflowX = this.props.scrollXType;
       }
 
       return React.createElement(
@@ -350,7 +351,7 @@ var GridTable = React.createClass({
 
     if (this.props.enableScrollX) {
       gridStyle = {
-        overflowX: "scroll",
+        overflowX: this.props.scrollXType,
         width: "100%"
       };
     }
