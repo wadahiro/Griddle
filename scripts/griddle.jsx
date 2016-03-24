@@ -615,7 +615,7 @@ var Griddle = React.createClass({
     },
     shouldShowNoDataSection: function(results){
         if (this.props.showColumnFilters) {
-            return false;
+            return typeof this.props.results === 'undefined' || this.props.results.length === 0;
         }
         return (this.props.useExternal === false && (typeof results === 'undefined' || results.length === 0 )) ||
             (this.props.useExternal === true && this.props.externalIsLoading === false && results.length === 0)
