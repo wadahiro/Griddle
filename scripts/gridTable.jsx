@@ -291,7 +291,7 @@ var GridTable = React.createClass({
               </div>
               <div ref="scrollableFooter" className="griddle-footer-scroll" style={gridFooterStyle} onScroll={this.handleScrollFooter}>
               { this.props.columnFilters &&
-                  <div class="">
+                  <div>
                     <table className={`griddle-column-filters-container ${this.props.className}`} style={tableStyle}>
                         {this.props.columnFilters}
                     </table>
